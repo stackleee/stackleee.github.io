@@ -2,17 +2,178 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
-
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blink Assignment</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        color: #333;
+        background-color: #f9f9f9;
+      }
+
+      h1, h2 {
+        text-align: center;
+        color: #2c3e50;
+      }
+
+      .section {
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .section img {
+        display: block;
+        margin: 20px auto;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .code-snippet {
+        background-color: #f4f4f4;
+        border-left: 5px solid #007acc;
+        padding: 10px;
+        margin: 20px auto;
+        font-family: "Courier New", Courier, monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      .question {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      .answer {
+        margin-top: 10px;
+        padding: 10px;
+        background: #eef;
+        border-left: 5px solid #007acc;
+        border-radius: 5px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #777;
+      }
+    </style>
   </head>
   <body>
-    <h1>Example Student's Assignment 1!</h1>
-    <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 1!</p>
+    <h1>Blink Assignment</h1>
+
+    <!-- Introduction -->
+    <div class="section" id="introduction">
+      <h2>Introduction</h2>
+      <img src="Circuit.jpg" alt="Circuit diagram" />
+      <p>
+        For this Blink Assignment, I worked with the Arduino and circuit to make three 
+        LEDs light on their own! As shown in the image above, this is my final presentation 
+        of the layout for the circuit.
+      </p>
+    </div>
+
+    <!-- Schematic -->
+    <div class="section" id="schematic">
+      <h2>Schematic</h2>
+      <img src="Schematic.jpg" alt="Schematic diagram" />
+      <p>
+        I decided to draw the schematic diagram to help me visualize what will happen in the circuit. 
+        As shown in the image, all LEDs share a common ground and have unique pin numbers as their 
+        power sources. The schematic demonstrates the flow of the circuit for each 
+        LED: Ground → LED → Resistor → Pin # (13, 12, and 11).
+      </p>
+    </div>
+
+    <!-- Calculations -->
+    <div class="section" id="calculations">
+      <h2>Calculations</h2>
+      <img src="Calculations.jpg" alt="Resistor calculations" />
+      <p>
+        Before starting the circuit,
+        I needed to calculate the required resistor value for all three LEDs
+        to ensure they would not burn out. Red LEDs typically have a voltage drop
+        of 1.8V. Since the supply of the voltage was 3.2V, and the recommended current was 
+        0.02A, the resistance was calculated using Ohmn's law: R=V/I=3.2/0.02=160Ω. Based 
+        on this, I chose a 220 Ω resistor, as it is the closest standard value to 160 Ω, ensuring
+        safe and reliable operation for the LEDs.
+      </p>
+    </div>
+
+    <!-- Code Structure -->
+    <div class="section" id="code-structure">
+      <h2>Code Structure</h2>
+      <p>Here is the code used on the Arduino to successfully light up all LEDs independently:</p>
+      <div class="code-snippet">
+        // the setup function runs once when you press reset or power the board
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);  // turn the LED 1 on (HIGH is the voltage level)
+  delay(1000);
+  digitalWrite(12, HIGH);  // turn the LED 2 on (HIGH is the voltage level)
+  delay(1000);
+  digitalWrite(11, HIGH);  // turn the LED 3 on (HIGH is the voltage level)
+  delay(1000);             // wait for a second
+  
+  digitalWrite(LED_BUILTIN, LOW);   // turn the LED 1 off by making the voltage LOW
+  delay(1000);   
+  digitalWrite(12, LOW);   // turn the LED 2 off by making the voltage LOW
+  delay(1000); 
+  digitalWrite(11, LOW);   // turn the LED 3 off by making the voltage LOW
+  delay(1000);             // wait for a second
+}
+      </div>
+    <!-- Let's See the Results -->
+    <div class="section" id="results">
+      <h2>Let's See the Results!</h2>
+      <video controls>
+        <source src="circuitmovie.mov" type="video/mp4" />
+        <p>Your browser does not support the video tag. Please download the video <a href="circuitmovie.mov">here</a>.</p>
+      </video>
+      <p>Take a look at the circuit in action!</p>
+    </div>
+    </div>
+
+    <!-- Additional Questions -->
+    <div class="section" id="additional-questions">
+      <h2>Additional Questions</h2>
+
+      <div class="question">1. Draw a graph where the X-axis is time, and the 
+        Y-axis is voltage across the LEDs. Draw a line for each of your 3 LEDs.</div>
+      <div class="answer">
+        <img src="Graph.png" alt="Voltage vs Time Graph" />
+      </div>
+
+      <div class="question">2. How many LEDs could you blink independently 
+        with your Arduino? How much current would that draw?</div>
+      <div class="answer">
+        As we know, the Arduino Uno has 14 total pins. Each pin 
+        can source up to 20 mA, but the total current for the board is 
+        limited to 200 mA. This means that only 10 LEDs can be safely controlled at once.
+      </div>
+
+      <div class="question">3. How fast do you need to blink your LEDs 
+        until you no longer notice they are blinking?</div>
+      <div class="answer">
+        When I set the delay to 4 milliseconds, it became very 
+        difficult to perceive the blinking.
+      </div>
     </div>
   </body>
 </html>
