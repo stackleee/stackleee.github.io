@@ -1,18 +1,188 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Fade Circuit Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        code {
+            display: block;
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+            color: #333;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        video {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .questions {
+            margin-top: 20px;
+        }
+        .questions h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LED Fade Circuit Project</h1>
+    </header>
+    <div class="container">
+        <section>
+            <h2>Introduction</h2>
+            <img src="Final%20Fade%20Circuit.jpg" alt="Final Fade Circuit">
+            <p>The goal of this assignment was to create a circuit with three LEDs and a 
+              push button, ensuring that at least one of the LEDs fades. The image above 
+              showcases my completed circuit after successfully achieving this objective.</p>
+        </section>
 
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+        <section>
+            <h2>Schematic</h2>
+            <img src="Schematic%20Fade.jpg" alt="Schematic of Circuit">
+            <p>Before starting my physical circuit, I sketched the schematic showing how 
+              the LEDs and push button work. The push button serves as a "gate": it closes 
+              when pressed and opens when released. The schematic for the push button is as 
+              follows: Ground -> 10k resistor -> pin 2 -> push button -> 5V. The LEDs connect 
+              uniquely to different pins: Ground -> LED -> resistor -> Pin # (11, 10, and 9).</p>
+        </section>
 
-    <link href="style.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <h1>Example Student's Assignment 2!</h1>
-    <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 2!</p>
+        <section>
+            <h2>LED Calculation</h2>
+            <img src="Fade%20LED%20Calculations.jpg" alt="LED Calculations">
+            <p>I calculated the resistance needed for the LEDs before building the circuit. Red LEDs have a voltage drop of 1.8V. Using Ohm's Law: R = V / I, where V = 3.2V and I = 0.02A, the resistance is 160 Ω. I chose a 220 Ω resistor, as it is the closest standard value.</p>
+        </section>
+
+        <section>
+            <h2>Push Button Calculation</h2>
+            <img src="Push%20Button%20Calculation.jpg" alt="Push Button Calculation">
+            <p>For the push button, I used a 10k resistor to ensure the current stays at a safe level of 0.5mA, which protects both the microcontroller and the push button. This resistance value is a standard and reliable choice for such circuits.</p>
+        </section>
+
+        <section>
+            <h2>Code Snippet</h2>
+            <p>Take a look at the code I used to make the circuit function properly!</p>
+            <code>
+// Setting the pin numbers to the variables.
+
+// buttonPin is connected to Pin 2
+int buttonPin = 2;
+// ledPinOne is connected to Pin 11
+int ledOne = 11;
+// ledPinTwo is connected to Pin 10
+int ledTwo = 10;
+// ledPinThree is connected to Pin 9
+int ledThree = 9;
+
+// variable for reading the pushbutton status
+int buttonState = 0;
+
+void setup() {
+  // Initializing the LED pin 1 as an output
+  pinMode(ledOne, OUTPUT);
+  // Initializing the LED pin 2 as an output
+  pinMode(ledTwo, OUTPUT);
+  // Initializing the LED pin 3 as an output
+  pinMode(ledThree, OUTPUT);
+
+  // Initializing the button as an input
+  pinMode(buttonPin, INPUT);
+
+}
+
+void loop() {
+  // Reads the state of the button value
+  buttonState = digitalRead(buttonPin);
+
+  // Checks if the button is being pressed. If so, the buttonState is HIGH.
+  if (buttonState == HIGH) {
+    // Fades in from min to max in increments of 5
+    for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+       // sets the value (range from 0 to 255) for LED one, two, and three.
+      analogWrite(ledOne, fadeValue);
+      analogWrite(ledTwo, fadeValue);
+      analogWrite(ledThree, fadeValue);
+      // wait for 30 milliseconds to see the dimming effect
+      delay(30);
+    }
+     
+  } else {
+    // turn LED off when button is not being pressed.
+
+    // led pin one, two, and thee will now be turned off.
+    digitalWrite(ledOne, LOW);
+    digitalWrite(ledTwo, LOW);
+    digitalWrite(ledThree, LOW);
+  }
+
+}
+            </code>
+        </section>
+
+        <section>
+            <h2>Final Results</h2>
+            <p>Take a look at the final results!</p>
+            <video controls>
+                <source src="Fadevideo.mov" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <section class="questions">
+            <h3>Additional Questions:</h3>
+            <h4>Question:</h4>
+            <p>Draw a chart where the X-axis is time and the Y-axis is voltage. Draw 3 lines representing the voltage across an LED with <code>analogWrite(led, 64)</code>, <code>analogWrite(led, 128)</code>, and <code>analogWrite(led, 255)</code>.</p>
+            <h4>Answer:</h4>
+            <p>[Insert your chart here]</p>
+
+            <h4>Question:</h4>
+            <p>Given your schematic, circuit, and firmware, assuming the only thing that draws current is your LEDs, how long would your circuit run if powered by a 1200mAh battery?</p>
+            <h4>Answer:</h4>
+            <p>[Insert your answer here]</p>
+        </section>
     </div>
-  </body>
+</body>
 </html>
+
