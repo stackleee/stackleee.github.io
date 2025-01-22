@@ -171,17 +171,19 @@ void loop() {
         </section>
 
         <section class="questions">
-            <h3>Additional Questions:</h3>
-            <h4>Question:</h4>
-            <p>Draw a chart where the X-axis is time and the Y-axis is voltage. Draw 3 lines representing the voltage across an LED with <code>analogWrite(led, 64)</code>, <code>analogWrite(led, 128)</code>, and <code>analogWrite(led, 255)</code>.</p>
-            <h4>Answer:</h4>
-            <p>[Insert your chart here]</p>
+          <h3>Additional Questions:</h3>
+          <h4>Question:</h4>
+          <p>Draw a chart where the X-axis is time and the Y-axis is voltage. Draw 3 lines representing the voltage across an LED with <code>analogWrite(led, 64)</code>, <code>analogWrite(led, 128)</code>, and <code>analogWrite(led, 255)</code>.</p>
+          <h4>Answer:</h4>
+          <img src="Additional%20Question%20fade%201.jpg" alt="Chart showing voltage across LEDs">
+          <p>Based on the graph, we find that <code>analogWrite(led, 255)</code> results in a 100% duty cycle (always on), <code>analogWrite(led, 128)</code> results in a 50% duty cycle, and <code>analogWrite(led, 64)</code> results in a 25% duty cycle.</p>
 
-            <h4>Question:</h4>
-            <p>Given your schematic, circuit, and firmware, assuming the only thing that draws current is your LEDs, how long would your circuit run if powered by a 1200mAh battery?</p>
-            <h4>Answer:</h4>
-            <p>[Insert your answer here]</p>
-        </section>
+          <h4>Question:</h4>
+          <p>Given your schematic, circuit, and firmware, assuming the only thing that draws current is your LEDs, how long would your circuit run if powered by a 1200mAh battery?</p>
+          <h4>Answer:</h4>
+          <img src="Additional%20Question%20Fade%202.jpg" alt="Calculation for battery runtime">
+          <p>To calculate the runtime, we use the formula shown in the image. With a 1200mAh battery, the total current drawn by the three LEDs (fading) is calculated as <code>(14.5mA × 3) / 2 = 21.75mA</code> Thus, the runtime is <code>1200mAh / 21.75mA = 55.17 hours</code> Therefore, the circuit would run for approximately 55.17 hours when powered by a 1200mAh battery.</p>
+      </section>
     </div>
 </body>
 </html>
