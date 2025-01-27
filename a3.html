@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Fade Circuit Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #d2a6ca;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        code {
+            display: block;
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+            color: #333;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        video {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .questions {
+            margin-top: 20px;
+        }
+        .questions h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>A3: Input Output</h1>
+    </header>
+    <div class="container">
+        <section>
+            <h2>Introduction</h2>
+            <img src="A3 Final Circuit.jpg" alt="Final Input Output Circuit">
+            <p>The goal of this project is to use a sensor in the voltage divider to change 
+                the state of the output device. For this assignment, I used a photoresistor for
+                the sensor and a LCD panel to show the output. This image above shows the 
+                complete circuit that I did for this assignment.</p>
+        </section>
+
+        <section>
+            <h2>Schematic</h2>
+            <img src="A3 Schematic.jpg" alt="Schematic of Circuit">
+            <p>Before starting my physical circuit, I would sketch out the schematic with what 
+                is happening with the photoresistor, LED, and the LCD Panel. For the schematic for the 
+                photoresistor, we see here that the schematic would contain two resistors and a pin in 
+                the middle to allow us to use analogRead(). For the LED schematic, it would go from 
+                ground to a 220 resistor to LED to pin 9. Lastly, for the LCD Panel, I would show how 
+                the LCD Panel would be connected to the Arduino board.
+            </p>
+        </section>
+
+        <section>
+            <h2>LED Calculation</h2>
+            <img src="A3 Calculations.jpg" alt="LED Calculations">
+            <p>I calculated the resistance needed for the LEDs before building the circuit. 
+                Red LEDs have a voltage drop of 1.8V. Using Ohm's Law: R = V / I, where V = 3.2V 
+                and I = 0.02A, the resistance is 160 Ω. I chose a 220 Ω resistor, as it is the 
+                closest standard value.</p>
+        </section>
+
+        <section>
+            <h2>Resistors</h2>
+            <p> Fo general information you will notice that I used a 220 ohm resistor for the LED. 
+                This is because the LED has a voltage drop of 1.8V and a current of 0.02A. Using Ohm's Law, 
+                we can calculate the resistance needed for the LED. The resistance is 160 ohms, however, 
+                I used a 220 ohm resistor as it is the closest standard value.
+
+                For the resistor for the photoresistor, I used a 10k ohm resistor. This is largely due to
+                being safe and make sure that nothing burns out. The resistance value of 10k ohms for the 
+                photoresistor is the standard and super reliable.
+            </p>
+        </section>
+
+        <section>
+            <h2>Code Snippet</h2>
+            <p>Take a look at the code I used to make the circuit function properly!</p>
+            <code>
+// A3: Input Output!
+// HCDE 439
+// Prof. Nadya Peek
+// Stacey Nguyen
+                
+// Inicluding library code
+#include <LiquidCrystal.h>
+                
+// Initialize the LCD (RS, E, D4, D5, D6, D7) to the corresponding pin numbers
+// RS to pin 12, E to pin 11, D4 to pin 5, D5 to pin 4, D6 to pin 3, D7 to pin 2
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+                
+// Setting up pin variables from controller board
+// ledPin is connected to pin 9
+const int ledPin = 9;
+// Photoresistor is connected to pin A0
+const int photoPin = A0;
+                
+// Variables for the photoresistor
+// Stores analog reading from photoresistor
+int sensorValue;
+// Stores maximum light brightness       
+int max = 0;
+// Stores minimum light brightness           
+int min = 1023;         
+                
+void setup() {
+// Initialize serial communication at 9600 bits per second
+Serial.begin(9600);
+                
+// Setting ledPin as an OUTPUT
+pinMode(ledPin, OUTPUT);
+                
+// Initialize the LCD with 16 columns and 2 rows
+lcd.begin(16, 2);
+// LCD displays "LED Light Level:"
+lcd.print("LED Light Level:");
+}
+                
+void loop() {
+// Read the analog value from the photoresistor (ranges from 0 to 1023)
+sensorValue = analogRead(photoPin);
+                
+// Update the min value
+if (sensorValue < min) {
+// Sets new minimum
+min = sensorValue; 
+}
+// Update max value 
+if (sensorValue > max) {
+// Sets new maximum
+max = sensorValue; 
+}
+                
+// Map the sensor value to a range suitable for the LED (0 to 255 for PWM)
+int ledBrightness = map(sensorValue, min + 5, max - 5, 0, 255);
+// Makes sures the value is within the 0-255 range
+ledBrightness = constrain(ledBrightness, 0, 255);
+                
+// Sets the LED brightness
+analogWrite(ledPin, ledBrightness);
+                
+// Print sensor and output values to Serial Monitor for debugging
+// Will print out in the Serial Monitor "Sensor Value: "
+Serial.print("Sensor Value: ");
+// Shows sensorValue
+Serial.println(sensorValue);
+// Will print out in the Serial Monitor "LED Brightness: "
+Serial.print("LED Brightness: ");
+// Shows the translated sensorValue to easier number for us to understand
+Serial.println(ledBrightness);
+                
+// Display the sensor value on the LCD
+// Moves to second row
+lcd.setCursor(0, 1);
+// LCD displays "Value: "
+lcd.print("Value: ");
+// LCD displays the brightness of the sensor
+lcd.print(ledBrightness);
+// Clear leftover characters
+lcd.print("   ");
+                
+// Delays for stability
+delay(100);
+}
+            </code>
+        </section>
+
+        <section>
+            <h2>Serial Monitor</h2>
+            <p>The video below shows the Serial Monitor in action!</p>
+            <video controls>
+                <source src="A3 Serial vid.mov" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p>Based on this video, these are some of the values
+                that you might read at the voltage divider, also where
+                I put the photoPin. These values show the brightness of the LED.
+            </p>
+        </section>
+
+        <section>
+            <h2>Final Results</h2>
+            <p>Take a look at the final results!</p>
+            <video controls>
+                <source src="A3 LCD vid.mov" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <section class="questions">
+          <h3>Additional Questions:</h3>
+          <h4>Question 1:</h4>
+          <p>In your voltage divider, can the variable resistor be either R1 or 
+            R2 or does it need to be one or the other? Justify your answer with example 
+            calculations.</p>
+          <h4>Answer:</h4>
+          <img src="A3 Additional Question 1.jpg" alt="Voltage Divider Calculation">
+          <p>As shown on the image, we see that after using the example calculations
+            we can see that the variable resistor cannot be either R1 or R2. We find that 
+            when we switch, as you see the final values change significantly when switching
+            R1 and R2. Of course, it may vary one what method you do, however, in this case it will not work. 
+            Also when switching out the variable resistor to the fixed resistor on the circuit did not allow
+            the LED to function properly. Thus, the variable resistor can only be R1.
+          </p>
+
+          <h4>Question 2:</h4>
+          <p>Draw a graph where the x-axis is time and the y-axis is voltage. Plot the 
+            voltage at V-measure of your voltage divider of your shared gif.</p>
+          <h4>Answer:</h4>
+          <img src="A3 Additional Question 2.jpg" alt="Voltage Divider Graph">
+          <p>We find here that when the sensor is open and untouched, the voltage is 3.55 V. 
+            Meanwhile, when you cover the photoresistor, the voltage value becomes approximately 1.00 V.
+            The image above displays the relationship between the voltage and the time for the photoresistor. 
+          </p>
+          <h4>Question 3:</h4>
+          <p>AnalogWrite and analogRead are respectively 8-bit and 10-bit values. Imagine you had 
+            10-bit PWM and a 16-bit analog-to-digital converter instead. How would this change your 
+            map() code? Explain your answer.</p>
+          <h4>Answer:</h4>
+          <p>When thinking of this question, we would realize that the values of the parameter in the 
+            map() function would change. The map() function would be able to handle a larger range of 
+            values when changing it to 16 bits. For example, if we had a 16-bit analog-to-digital converter, 
+            the range of values would be from 0 to 65535 unlike 0 to 1023. This would change the map() code to 
+            be more precise as it would be able to handle a larger range of values. To see the change in the 
+            actual code function it would then look like this: int ledBrightness = map(sensorValue, min+5, max-5, 0, 1023);.
+
+          </p>
+      </section>
+    </div>
+</body>
+</html>
