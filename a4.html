@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blink Assignment</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        color: #333;
+        background-color: #ffffff;
+      }
+
+      h1, h2 {
+        text-align: center;
+        color: #2c3e50;
+      }
+
+      .section {
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        background: #f6f5f5;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .section img {
+        display: block;
+        margin: 20px auto;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .code-snippet {
+        background-color: #f4f4f4;
+        border-left: 5px solid #007acc;
+        padding: 10px;
+        margin: 20px auto;
+        font-family: "Courier New", Courier, monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      .question {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      .answer {
+        margin-top: 10px;
+        padding: 10px;
+        background: #eef;
+        border-left: 5px solid #007acc;
+        border-radius: 5px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>A4: Libraries!</h1>
+
+    <!-- Introduction -->
+    <div class="section" id="introduction">
+      <h2>Introduction</h2>
+      <img src="A4 Circuit.jpg" alt="Circuit diagram" />
+      <p>
+        For this library assignment, I worked with an Arduino Uno and two libraries—the 
+        CapacitiveSensor and Servo libraries—to control a servo motor based on capacitive 
+        touch input. As shown in the image above, this is the final presentation of my circuit, 
+        demonstrating how the servo responds to touch interactions.
+      </p>
+    </div>
+
+    <!-- Schematic -->
+    <div class="section" id="schematic">
+      <h2>Schematic</h2>
+      <img src="A4 Schematic.jpg" alt="Schematic diagram" />
+      <p>
+        The schematic above illustrates the connections between the Arduino Uno, the 
+        capacitive touch sensor, and the servo motor. For the capacitive touch, I used 
+        a 1 megaohm resistor to activate touch. The capacitive touch sensor is also
+        connected to pins 4 and 2, while the servo motor is connected to pin ~9. The 
+        servo motor moves to 90 degrees when the capacitive sensor detects touch and 
+        returns to 0 degrees when untouched.
+      </p>
+    </div>
+
+    <!-- Code Structure -->
+    <div class="section" id="code-structure">
+      <h2>Code Structure</h2>
+      <p>Take a look at my firmware below ></p>
+      <div class="code-snippet">
+        <code>
+// A4: Libraries!
+// Stacey Nguyen
+// HCDE 439 
+// Professor Peek
+// Date: 02/03/2025
+
+// Setting up Capacitive touch library
+#include &lt;CapacitiveSensor.h&gt;
+// Setting up servo motor library
+#include &lt;Servo.h&gt;
+
+// Creating capacitive touch sensor as an object
+CapacitiveSensor cs_4_2 = CapacitiveSensor(4,2);
+// Creating the servo as an object
+Servo myServo;
+
+// Setting a threshold value
+int threshold = 500;
+
+
+void setup() {
+  // Setting up Serial monitor use for debugging
+  Serial.begin(9600);
+
+  // Setting servo to be attach to pin 9
+  myServo.attach(9);
+
+}
+
+void loop() {
+  // Finds the average capacitive sensor value based on 30 readings
+  long capValue = cs_4_2.capacitiveSensor(30);
+
+  // Prints into the serial monitor: "Capacitive Sensor Value: "
+  Serial.print("Capacitive Sensor Value: ");
+  // Prints the capValue into the serial monitor
+  Serial.println(capValue);
+
+  // If senses touch
+  if (capValue > threshold) {
+    // Makes the servo to move 90 degrees
+    myServo.write(90);
+  // If untouched
+  } else {
+    // Makes the servo to move back to 0 degrees
+    myServo.write(0);
+  }
+
+  // Including delay for stability
+  delay(50);
+}
+        </code>
+      </div>
+    <!-- Let's See the Results -->
+    <div class="section" id="results">
+      <h2>Let's See the Results!</h2>
+         <video src="A4 vid.mov" controls></video>
+      <p>Take a look at servo motor in action!</p>
+    </div>
+    </div>
+
+    <!-- Additional Questions -->
+    <div class="section" id="additional-questions">
+      <h2>Additional Questions</h2>
+
+      <div class="question">1: Say you are using a servo motor you attach to pin 9. 
+        In your loop() you have the following code:
+        for (int i=0, i<180, i++){servo.write(i); delay(100);}
+        
+        Draw a graph with the X axis in seconds, for two seconds, and the y-axis 
+        the voltage at pin 9 with respect to ground.</div>
+      <div class="answer">
+        <img src="A4 Q1.png" alt="Voltage vs Time Graph"/>
+        As shown in the graph above, the x-axis increments are set to 0.1 seconds, corresponding
+        to the 100-millisecond delay in the loop. Since the looop increases the servo angle by 1 
+        degree per iteration, and each iteration takes 0.1 seconds, the servo motor will move from 
+        0 to 20 degrrees over a span of 2 seconds. Because the servo motor is controlled using PWM, 
+        the voltage at Pin 9 oscillates between 0V and 5V.
+      </div>
+
+      <div class="question">2: Your input device is slightly broken, leading it to give us 
+        an erroneous reading 1% of the time. How can we address this? Answer in (pseudo)code.</div>
+      <div class="answer">
+        To address this issue and ensure we dont process erroneous readings, we can implement an
+        averaging system to help filter out the noise. With storing a set of 10 readings, and 
+        averaging those values, we can get a more refined value of the sensor input.
+        <div class="code-snippet">
+          <code>
+Stores the last N readings in a rawValues list and return the average value.
+// Creating capacitive touch sensor as an object
+CapacitiveSensor touchSensor = CapacitiveSensor(4, 2);
+// Creating the servo as an object
+Servo myServo;
+
+// Setting a threshold value
+int touchThreshold = 500;
+
+// Moving average filter variables
+// Number of sensore readings to average
+const int numSamples = 10; 
+// An array to store readings
+long sensorReadings[numSamples];
+// Index for the list of readings
+int readingIndex = 0; 
+// Setting up the variable to store the sum of values
+long total = 0; 
+
+void setup() {
+  // Setting up Serial monitor use for debugging
+  Serial.begin(9600);
+
+  // Setting servo to be attached to pin 9
+  myServo.attach(9);
+
+  // Initialize the sensorReadings array with 0s
+  for (int i = 0; i < numSamples; i++) {
+    sensorReadings[i] = 0;
+  }
+}
+
+void loop() {
+  // Get current capacitive sensor reading
+  long currentReading = touchSensor.capacitiveSensor(30);
+
+  // Implement moving average filter
+  // Removes the previous reading from the total
+  total -= sensorReadings[readingIndex];
+  // Adds the new reading to the array
+  sensorReadings[readingIndex] = currentReading; 
+  // Creating new total
+  total += sensorReadings[readingIndex];  
+  // Changes the reading index
+  readingIndex = (readingIndex + 1) % numSamples; 
+
+   // Computes the average based on the set of 10 sensor readings
+  long filteredValue = total / numSamples; 
+
+  // Print filtered capacitive sensor value
+  Serial.print("Filtered Capacitive Sensor Value: ");
+  Serial.println(filteredValue);
+  ...}
+          </code>
+        </div>
+      </div>
+
+      <div class="question">3: Your input device is slightly noisy, leading the measurement 
+        to randomly deviate from the true measurement up or down by 10%. How can we address 
+        this? Answer in (pseudo)code.</div>
+      <div class="answer">
+        Since our input device is slightly noisey and the measurement randomly deviates from 
+        the true measurement up or down by 10%, we can address this by implementing a moving 
+        average filter. This filter will help smooth out the readings when there are random
+        increases or decreases in the sensor value.
+        <div class="code-snippet">
+        <code>
+Storing the last N readings to the rawValues list and making sure it returns the average.
+rawValues = []
+The number of the readings is 10, so the list will store 10 readings
+Making sure to have a variable holder thus, total = 0.
+
+Once we are using the function, we will get the noise sensor value through
+getFilteredReading() function.
+
+Once we have gotten the toale we will remove the older value from the total
+total -= rawValues[0]
+After we remove the oldest reading, we will add a new reading to the array.
+rawValues.append(new value)
+
+Then we will make sure the list will return the average value
+eturn total / N           
+
+        <code> 
+      </div>
+    </div>
+  </body>
+</html>
