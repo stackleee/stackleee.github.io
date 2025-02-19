@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A5: High(er) and Transistors!</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        color: #333;
+        background-color: #ffffff;
+      }
+
+      h1, h2 {
+        text-align: center;
+        color: #2c3e50;
+      }
+
+      .section {
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        background: #f6f5f5;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .section img {
+        display: block;
+        margin: 20px auto;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .code-snippet {
+        background-color: #f4f4f4;
+        border-left: 5px solid #007acc;
+        padding: 10px;
+        margin: 20px auto;
+        font-family: "Courier New", Courier, monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      .question {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      .answer {
+        margin-top: 10px;
+        padding: 10px;
+        background: #eef;
+        border-left: 5px solid #007acc;
+        border-radius: 5px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>A5: High(er) and Transistors!</h1>
+
+    <!-- Introduction -->
+    <div class="section" id="introduction">
+      <h2>Introduction</h2>
+      <img src="A5 Final Circuit.jpg" alt="Circuit diagram" />
+      <p>
+        For this assignment, I wored with and Arduino Uno, N-MOSFET, external power supply, 
+        LED strip, and ultrasonic sensor. The N-MOSFET is used to control the brightness, 
+        meanwhile the ultrasonic sensor is used to measure the distance. The concept of my
+        assignment is that the closer you are to the ultrasonic sensor, the brighter the 
+        LED strip will be. As shown in the image above, this is the final presentation of my
+        circuit, demonstrating how the ultrasonic sensor and N-MOSFET work together to control
+        the brightness of the LED strip.
+      </p>
+    </div>
+
+    <!-- Schematic -->
+    <div class="section" id="schematic">
+      <h2>Schematic</h2>
+      <img src="A5 Schematic.jpg" alt="Schematic diagram" />
+      <p>
+        The schematic above illustrates the connections between the ultrasonic sensor and arduino,
+        as well as the N-MOSFET and LED strip. The ultrasonic sensor is connected to pins 10 and 11 (PWM),
+        and the N-MOSFET is connected to pin 9 (PWM). The LED strip is powered by an external power supply.
+      </p>
+    </div>
+
+    <!-- Calculations -->
+    <div class="section" id="calculations">
+        <h2>Calculation</h2>
+        <img src="A5 Calculations.jpg" alt="Calculation" />
+        <p>
+            The calculations above demonstrate the amount of current and voltage the LED 
+            strip will use.Based on the calculations, the LED strip operates at 12V, with an 
+            estimated current of 8.75 mA. The MOSFET controls the current flow, ensuring the LED 
+            strip receives the correct power while minimizing heat dissipation.
+        </p>
+      </div>
+
+    <!-- Code Structure -->
+    <div class="section" id="code-structure">
+      <h2>Code Structure</h2>
+      <p>Take a look at my firmware below ></p>
+      <div class="code-snippet">
+        <code>
+// A5: High(er) voltage and transistors!
+// HCDE 439
+// Prof. Nadya Peek
+// Stacey Nguyen
+            
+// Defining the ultrasonic sensor pins
+// The Trigger pin will be connected to pin 11
+const int trigPin = 11; 
+// The Echo pin will be connected to pin 10
+const int echoPin = 10;
+            
+// Defining the N-MOSFET transistor pin (PWM)
+// The control pin (gate) will be connected to pin 9
+const int nmosfetPin = 9;
+            
+            
+void setup() {
+    // Setting the trigger from the ultrasonic as an output
+    pinMode(trigPin, OUTPUT); 
+    // Setting the echo from the ultrasonic as an input
+    pinMode(echoPin, INPUT);
+            
+    // Setting the N-MOSFET control pin as an output  
+    pinMode(nmosfetPin, OUTPUT); 
+            
+    // Setting up the Serial monitor for it to start debugging
+    Serial.begin(9600);  
+}
+            
+void loop() {
+    // Ensuring that the ultrasonic sound pulse is functioning properly
+    // No sound pulse
+    digitalWrite(trigPin, LOW);
+    // for 2 microseconds
+    delayMicroseconds(2);
+    // Sound pulse on
+    digitalWrite(trigPin, HIGH);
+    // for 10 microseconds
+    delayMicroseconds(10);
+    // No sound pulse
+    digitalWrite(trigPin, LOW);
+            
+    // Measuring the echo time
+    long duration = pulseIn(echoPin, HIGH);
+                
+    // This mathematical step converts the duration into centimeters
+    int distance = duration * 0.034 / 2; 
+            
+    // The Serial Monitor will print "Distance: "
+    Serial.print("Distance in cm: ");
+    // Then it will print the distance in centimeters
+    Serial.print(distance);
+            
+    // Mapping aka translating the distance so that it is ranging from 0-255 
+    // Making that so closer you are to the ultrasonic, it will be brighter
+    int brightness = map(distance, 10, 100, 255, 0);
+            
+    // Constrains the brightness to min 0 and max 255
+    brightness = constrain(brightness, 0, 255);
+            
+    // Makes the LED to change in brightness based on the N-MOSFET
+    analogWrite(nmosfetPin, brightness);
+            
+    // Adding delay to apply a smooth function
+    delay(200);  
+}
+        </code>
+      </div>
+    <!-- Let's See the Results -->
+    <div class="section" id="results">
+      <h2>Let's See the Results!</h2>
+         <video src="A5 vid.mov" controls></video>
+      <p>Take a look at the LED strip in action!</p>
+    </div>
+    </div>
+
+    <!-- Additional Questions -->
+    <div class="section" id="additional-questions">
+      <h2>Additional Questions</h2>
+
+      <div class="question">1: This is the datasheet for the n-mosfet 
+        transistor: https://www.diodes.com/assets/Datasheets/DMT6009LCT.pdfLinks 
+        to an external site.f What is the absolute maximum amount of current between 
+        pins 2 and 3?</div>
+      <div class="answer">
+        The max amount of current between pins 2 and 3 is 80A based on reading the datasheet.
+      </div>
+
+      <div class="question">2: 2: Draw a schematic for a circuit with using at least your arduino, 
+        a DC motor, a flyback diode, and capacitors between power and ground. Find parts with 
+        datasheets you could use for each of these schematic components.</div>
+      <div class="answer">
+        <img src="A5-Q2.jpg" alt="L293D Chip Schematic"/>
+        The image above is the schematic for a circuit with using at least an arduino, DC motor, a
+        flyback diode, and capaciotr between power and ground.
+         
+        </div>
+      </div>
+
+      <div class="question">3: Here is the datasheet for the L293D chip: 
+        https://www.ti.com/product/L293DLinks to an external site.. Draw a 
+        schematic using at least your arduino, this chip, and two motors. 
+        Write (pseudo) code that shows how you would move the motors both forward, 
+        both back, then one forward one back, and one back then forward.</div>
+      <div class="answer">
+        <img src="A5-3.jpg" alt="L293D Chip Schematic"/>
+        The image above illustrates the schematic of the L293D chip, Arduino, and two motors as 
+        well as the pseudo code.
+      </div>
+    </div>
+  </body>
+</html>
